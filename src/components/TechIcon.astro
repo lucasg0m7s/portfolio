@@ -1,0 +1,44 @@
+---
+import { getIcon } from "@/data/tech";
+import { cn } from "@/lib/utils";
+
+type Props = {
+  slug?: string;
+  name: string;
+  class?: string;
+  colored?: boolean;
+};
+
+const { slug, name, class: className = "size-4", colored = false } = Astro.props;
+const icon = getIcon(slug);
+const initials = name
+  .replace(/[^A-Za-z0-9#+ ]/g, "")
+  .split(" ")
+  .map((part) => part[0])
+  .join("")
+  .slice(0, 2);
+---
+
+{icon ? (
+  <svg
+    viewBox="0 0 24 24"
+    role="img"
+    aria-label={name}
+    class={cn("shrink-0", className)}
+    style={colored ? `color:#${icon.hex}` : undefined}
+    fill="currentColor"
+  >
+    <path d={icon.path} />
+  </svg>
+) : (
+  <span
+    aria-label={name}
+    role="img"
+    class={cn(
+      "grid shrink-0 place-items-center rounded-[4px] bg-current/15 font-mono text-[0.55em] font-bold",
+      className,
+    )}
+  >
+    {initials}
+  </span>
+)}

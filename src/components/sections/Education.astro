@@ -1,0 +1,169 @@
+---
+import { Image } from "astro:assets";
+import anhanguera from "@/assets/logos/anhanguera.png";
+import FatecLogo from "@/assets/logos/fatec.svg";
+import FullStackClubLogo from "@/assets/logos/full-stack-club.svg";
+import Section from "@/components/Section.astro";
+import { awards, certifications, timeline, timelineRange } from "@/data/education";
+import { cn } from "@/lib/utils";
+
+const toMonths = (value: string) => {
+  const [year, month] = value.split("-").map(Number);
+  return year! * 12 + (month! - 1);
+};
+const rangeStart = toMonths(timelineRange.start);
+const rangeLength = toMonths(timelineRange.end) - rangeStart + 1;
+const years = Array.from({ length: rangeLength / 12 }, (_, i) => 2022 + i);
+const percent = (value: number) => `${((value / rangeLength) * 100).toFixed(2)}%`;
+
+const bars = timeline.map((item) => {
+  const start = toMonths(item.start) - rangeStart;
+  const length = toMonths(item.end) - toMonths(item.start) + 1;
+  return { ...item, left: percent(start), width: percent(length) };
+});
+
+const today = percent(toMonths("2026-10") - rangeStart + 0.5);
+---
+
+<Section
+  id="formacao"
+  title="Formação"
+  note="estudando desenvolvimento desde 2022"
+  description="Estudo desenvolvimento desde 2022, do técnico à pós. No meio do caminho, comecei a trabalhar no setor bancário."
+>
+  <figure class="mb-16">
+    <div class="relative overflow-x-auto">
+      <div class="relative min-w-[680px] pt-8">
+        <ol class="absolute inset-x-0 top-0 grid grid-cols-6" aria-hidden="true">
+          {years.map((year) => (
+            <li class="meta border-l pl-2">{year}</li>
+          ))}
+        </ol>
+        <div
+          class="pointer-events-none absolute inset-x-0 top-6 bottom-0 grid grid-cols-6"
+          aria-hidden="true"
+        >
+          {years.map(() => (
+            <span class="border-l border-dashed" />
+          ))}
+        </div>
+        <span
+          class="absolute top-6 bottom-0 w-px bg-primary"
+          style={`left:${today}`}
+          aria-hidden="true"
+        >
+          <span class="meta absolute -top-0.5 left-1.5 -translate-y-full whitespace-nowrap text-primary">
+            hoje
+          </span>
+        </span>
+
+        <ul class="relative flex flex-col gap-3 py-4">
+          {bars.map((bar) => (
+            <li class="relative h-14">
+              <div
+                class={cn(
+                  "absolute inset-y-0 flex flex-col justify-center overflow-hidden rounded-md border px-3",
+                  bar.kind === "estudo"
+                    ? "border-primary/30 bg-primary/10"
+                    : "border-foreground/15 bg-foreground/[0.06]",
+                  bar.ongoing &&
+                    "rounded-r-none border-r-0 [mask-image:linear-gradient(to_right,#000_85%,transparent)]",
+                )}
+                style={`left:${bar.left};width:${bar.width}`}
+              >
+                <p class="truncate text-sm font-semibold">{bar.label}</p>
+                <p class="meta truncate">{bar.detail}</p>
+              </div>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+    <figcaption class="meta mt-3 flex flex-wrap gap-x-6 gap-y-1">
+      <span class="inline-flex items-center gap-2">
+        <span class="size-2.5 rounded-sm border border-primary/30 bg-primary/10"></span>estudo
+      </span>
+      <span class="inline-flex items-center gap-2">
+        <span class="size-2.5 rounded-sm border border-foreground/15 bg-foreground/[0.06]"></span>
+        trabalho
+      </span>
+    </figcaption>
+  </figure>
+
+  <div class="grid gap-14 lg:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)] lg:gap-20">
+    <ol class="divide-y border-y">
+      <li class="grid grid-cols-[4.5rem_1fr] items-center gap-5 py-6 sm:grid-cols-[5.5rem_1fr_auto]">
+        <div class="flex h-12 items-center gap-1.5" aria-hidden="true">
+          <Image src={anhanguera} alt="" width={40} height={40} class="size-9 rounded-sm" />
+          <FullStackClubLogo class="size-8" />
+        </div>
+        <div>
+          <h3 class="font-semibold">Pós-graduação em Arquitetura de Software com IA</h3>
+          <p class="text-sm text-muted-foreground">Anhanguera e Full Stack Club · lato sensu</p>
+        </div>
+        <p class="meta col-start-2 sm:col-start-auto sm:text-right">
+          jul. 2026 — jul. 2027
+          <br class="hidden sm:block" />
+          <span class="sm:hidden"> · </span>em andamento
+        </p>
+      </li>
+      <li class="grid grid-cols-[4.5rem_1fr] items-center gap-5 py-6 sm:grid-cols-[5.5rem_1fr_auto]">
+        <div class="flex h-12 items-center" aria-hidden="true">
+          <FatecLogo class="h-7 w-auto text-foreground" />
+        </div>
+        <div>
+          <h3 class="font-semibold">Tecnólogo em Análise e Desenvolvimento de Sistemas</h3>
+          <p class="text-sm text-muted-foreground">Fatec Americana · AMS</p>
+        </div>
+        <p class="meta col-start-2 sm:col-start-auto sm:text-right">
+          fev. 2025 — dez. 2026
+          <br class="hidden sm:block" />
+          <span class="sm:hidden"> · </span>em andamento
+        </p>
+      </li>
+      <li class="grid grid-cols-[4.5rem_1fr] items-center gap-5 py-6 sm:grid-cols-[5.5rem_1fr_auto]">
+        <div class="flex h-12 items-center" aria-hidden="true">
+          <span class="rounded-sm bg-[#b20000] px-1.5 py-0.5 text-sm font-bold tracking-wide text-white">
+            ETEC
+          </span>
+        </div>
+        <div>
+          <h3 class="font-semibold">Técnico em Desenvolvimento de Sistemas</h3>
+          <p class="text-sm text-muted-foreground">ETEC · ensino médio integrado (M-Tec PI)</p>
+        </div>
+        <p class="meta col-start-2 sm:col-start-auto sm:text-right">
+          fev. 2022 — dez. 2024
+          <br class="hidden sm:block" />
+          <span class="sm:hidden"> · </span>concluído
+        </p>
+      </li>
+    </ol>
+
+    <div class="flex flex-col gap-10">
+      <div>
+        <h3 class="text-xl font-semibold">Prêmios</h3>
+        <ul class="mt-4 divide-y border-y">
+          {awards.map((award) => (
+            <li class="py-3.5">{award}</li>
+          ))}
+        </ul>
+      </div>
+      <div>
+        <h3 class="text-xl font-semibold">Certificação e estudo contínuo</h3>
+        <ul class="mt-4 divide-y border-y">
+          {certifications.map((item) => (
+            <li class="py-3.5">
+              {item.name} <span class="text-muted-foreground">· {item.detail}</span>
+            </li>
+          ))}
+          <li class="py-3.5">
+            Trilha de estudos própria de out. 2026 a mai. 2027
+            <span class="text-muted-foreground">
+              · arquitetura, segurança, cloud, observabilidade e fundamentos de IA
+            </span>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</Section>

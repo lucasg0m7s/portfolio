@@ -1,0 +1,84 @@
+---
+import Icon from "@/components/Icon.astro";
+import { profile } from "@/data/profile";
+
+const channels = [
+  { label: "LinkedIn", value: "in/lucas-g0m9s", href: profile.social.linkedin, external: true },
+  { label: "GitHub", value: "lucasg0m7s", href: profile.social.github, external: true },
+] as const;
+---
+
+<section id="contato" aria-labelledby="contato-titulo" class="bg-foreground text-background">
+  <div class="container-page grid gap-12 py-24 sm:py-32 lg:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)] lg:items-end">
+    <div>
+      <h2
+        id="contato-titulo"
+        class="display text-[clamp(2.25rem,5vw,3.5rem)] leading-tight font-semibold tracking-[-0.03em]"
+      >
+        Vamos conversar.
+      </h2>
+      <p class="mt-6 max-w-[44ch] text-lg opacity-75">
+        Se quiser falar de trabalho, de um projeto ou só trocar uma ideia, me chama por e-mail ou
+        LinkedIn.
+      </p>
+      <div class="mt-10 flex flex-wrap items-center gap-3">
+        <a
+          href={`mailto:${profile.email}`}
+          class="inline-flex items-center gap-2 rounded-full bg-background px-6 py-3 font-medium text-foreground transition-transform hover:-translate-y-0.5"
+        >
+          <Icon name="mail" />
+          {profile.email}
+        </a>
+        <button
+          type="button"
+          class="inline-flex items-center gap-2 rounded-full border border-background/25 px-5 py-3 font-medium transition-colors hover:border-background/60"
+          data-copy={profile.email}
+        >
+          <Icon name="copy" />
+          <span data-copy-label aria-live="polite">
+            Copiar e-mail
+          </span>
+        </button>
+      </div>
+    </div>
+
+    <ul class="divide-y divide-background/15 border-y border-background/15">
+      {channels.map((channel) => (
+        <li>
+          <a
+            href={channel.href}
+            target={channel.external ? "_blank" : undefined}
+            rel={channel.external ? "noopener noreferrer" : undefined}
+            class="group flex items-center justify-between gap-4 py-5"
+          >
+            <span class="text-xl font-medium">{channel.label}</span>
+            <span class="flex items-center gap-3 font-mono text-sm opacity-70 transition-opacity group-hover:opacity-100">
+              {channel.value}
+              <Icon
+                name={channel.external ? "arrow-up-right" : "download"}
+                class="size-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+              />
+            </span>
+          </a>
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>
+
+<script>
+  document.querySelectorAll<HTMLButtonElement>("[data-copy]").forEach((button) => {
+    const label = button.querySelector("[data-copy-label]");
+    button.addEventListener("click", async () => {
+      try {
+        await navigator.clipboard.writeText(button.dataset.copy ?? "");
+        if (label) label.textContent = "E-mail copiado";
+      } catch {
+        if (label) label.textContent = "Não foi possível copiar";
+      }
+      setTimeout(() => {
+        if (label) label.textContent = "Copiar e-mail";
+      }, 2400);
+    });
+  });
+</script>

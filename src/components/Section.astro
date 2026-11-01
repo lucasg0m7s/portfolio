@@ -1,0 +1,32 @@
+---
+import { cn } from "@/lib/utils";
+
+type Props = {
+  id: string;
+  title: string;
+  note?: string;
+  description?: string;
+  class?: string;
+};
+
+const { id, title, note, description, class: className } = Astro.props;
+const headingId = `${id}-titulo`;
+---
+
+<section id={id} aria-labelledby={headingId} class={cn("py-20 sm:py-28", className)}>
+  <div class="container-page">
+    <header class="mb-12 grid gap-4 border-b pb-6 sm:mb-14 sm:grid-cols-[1fr_auto] sm:items-end">
+      <div>
+        <h2
+          id={headingId}
+          class="display text-[clamp(1.9rem,3.6vw,2.6rem)] leading-tight font-semibold"
+        >
+          {title}
+        </h2>
+        {description && <p class="mt-4 max-w-[58ch] text-muted-foreground">{description}</p>}
+      </div>
+      {note && <p class="meta sm:text-right">{note}</p>}
+    </header>
+    <slot />
+  </div>
+</section>

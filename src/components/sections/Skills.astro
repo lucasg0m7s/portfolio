@@ -1,0 +1,47 @@
+---
+import Section from "@/components/Section.astro";
+import TechIcon from "@/components/TechIcon.astro";
+import { skillGroups } from "@/data/skills";
+import { getIcon } from "@/data/tech";
+---
+
+<Section
+  id="habilidades"
+  title="Habilidades técnicas"
+  note="o que uso no dia a dia"
+  description="As ferramentas que já usei para entregar coisa de verdade, no trabalho ou nos projetos."
+>
+  <div class="divide-y border-b">
+    {skillGroups.map((group) => (
+      <div class="grid gap-5 py-8 first:pt-0 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.6fr)] lg:gap-14">
+        <div>
+          <h3 class="text-xl font-semibold">{group.title}</h3>
+          <p class="meta mt-1">{group.evidence}</p>
+          <p class="mt-3 max-w-[46ch] text-[0.95rem] text-muted-foreground">{group.description}</p>
+        </div>
+        <ul class="flex flex-wrap content-start gap-2">
+          {group.items.map((item) => {
+            const icon = getIcon(item.slug);
+            return (
+              <li
+                class="group/chip inline-flex items-center gap-2 rounded-full border bg-card px-3.5 py-2 text-sm transition-colors hover:border-primary/40"
+                style={icon ? `--brand:#${icon.hex}` : undefined}
+              >
+                {item.slug ? (
+                  <TechIcon
+                    slug={item.slug}
+                    name={item.name}
+                    class="size-4 text-muted-foreground transition-colors group-hover/chip:text-[var(--brand)] dark:group-hover/chip:text-primary"
+                  />
+                ) : (
+                  <span class="size-1.5 rounded-full bg-muted-foreground/50" aria-hidden="true" />
+                )}
+                {item.name}
+              </li>
+            );
+          })}
+        </ul>
+      </div>
+    ))}
+  </div>
+</Section>

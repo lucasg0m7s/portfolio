@@ -1,0 +1,111 @@
+---
+import { cn } from "@/lib/utils";
+import Icon from "@/components/Icon.astro";
+import { buttonVariants } from "@/components/ui/button";
+import { navigation } from "@/data/navigation";
+import { profile } from "@/data/profile";
+import ThemeToggle from "./ThemeToggle.astro";
+---
+
+<header
+  class="sticky top-0 z-40 border-b border-transparent bg-background/85 backdrop-blur-sm transition-colors [&.scrolled]:border-border"
+  data-header
+>
+  <div class="container-page flex h-16 items-center justify-between gap-6">
+    <a
+      href="/"
+      class="display text-lg font-semibold tracking-[-0.02em]"
+      aria-label={`${profile.name}, página inicial`}
+    >
+      Lucas Gomes
+    </a>
+
+    <nav aria-label="Principal" class="hidden md:block">
+      <ul class="flex items-center gap-1 text-[0.95rem]">
+        {navigation.map((item) => (
+          <li>
+            <a
+              href={item.href}
+              data-nav={item.id}
+              class="relative rounded-full px-3.5 py-2 text-muted-foreground transition-colors hover:text-foreground aria-[current=true]:bg-accent aria-[current=true]:text-foreground"
+            >
+              {item.label}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+
+    <div class="flex items-center gap-1">
+      <ThemeToggle />
+      <button
+        type="button"
+        popovertarget="menu-movel"
+        class={cn(
+          buttonVariants({ variant: "ghost", size: "icon" }),
+          "size-10 rounded-full md:hidden",
+        )}
+        aria-label="Abrir menu"
+      >
+        <Icon name="menu" class="size-5" />
+      </button>
+    </div>
+  </div>
+
+  <div
+    id="menu-movel"
+    popover
+    class="inset-x-0 top-16 m-0 h-auto w-full max-w-none border-b bg-background p-0 text-foreground md:hidden"
+  >
+    <nav aria-label="Menu móvel" class="container-page py-2">
+      <ul class="flex flex-col">
+        {navigation.map((item) => (
+          <li>
+            <a href={item.href} class="block border-b py-4 text-xl font-medium" data-close-menu>
+              {item.label}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+  </div>
+  <slot />
+</header>
+
+<script>
+  const header = document.querySelector<HTMLElement>("[data-header]");
+  const menu = document.getElementById("menu-movel");
+
+  const onScroll = () => header?.classList.toggle("scrolled", window.scrollY > 8);
+  onScroll();
+  window.addEventListener("scroll", onScroll, { passive: true });
+
+  document.querySelectorAll("[data-close-menu]").forEach((link) => {
+    link.addEventListener("click", () => menu?.hidePopover());
+  });
+
+  const links = new Map(
+    [...document.querySelectorAll<HTMLAnchorElement>("[data-nav]")].map((link) => [
+      link.dataset.nav,
+      link,
+    ]),
+  );
+  const sections = [...links.keys()]
+    .map((id) => (id ? document.getElementById(id) : null))
+    .filter((section): section is HTMLElement => section !== null);
+
+  if (sections.length > 0) {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (!entry.isIntersecting) continue;
+          links.forEach((link, id) =>
+            link.setAttribute("aria-current", String(id === entry.target.id)),
+          );
+        }
+      },
+      { rootMargin: "-45% 0px -50% 0px" },
+    );
+    sections.forEach((section) => observer.observe(section));
+  }
+</script>

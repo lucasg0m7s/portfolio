@@ -1,0 +1,206 @@
+---
+import { cn } from "@/lib/utils";
+import type { GetStaticPaths } from "astro";
+import { Image } from "astro:assets";
+import { render } from "astro:content";
+import Icon from "@/components/Icon.astro";
+import FlowDiagram from "@/components/project/FlowDiagram.astro";
+import StackList from "@/components/project/StackList.astro";
+import StatusBadge from "@/components/project/StatusBadge.astro";
+import { buttonVariants } from "@/components/ui/button";
+import { profile } from "@/data/profile";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { getProjects, projectHref, type Project } from "@/lib/projects";
+
+export const getStaticPaths = (async () => {
+  const projects = await getProjects();
+  return projects.map((project, index) => ({
+    params: { slug: project.id },
+    props: { project, next: projects[(index + 1) % projects.length] },
+  }));
+}) satisfies GetStaticPaths;
+
+type Props = { project: Project; next: Project };
+
+const { project, next } = Astro.props;
+const { Content } = await render(project);
+const {
+  title,
+  tagline,
+  summary,
+  role,
+  period,
+  status,
+  stack,
+  metrics,
+  flow,
+  links,
+  repoStatus,
+  screens,
+} = project.data;
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "CreativeWork",
+  name: title,
+  headline: tagline,
+  description: summary,
+  author: { "@type": "Person", name: profile.fullName, url: Astro.site?.toString() },
+  keywords: stack.join(", "),
+};
+---
+
+<BaseLayout title={title} description={summary} type="article" jsonLd={jsonLd}>
+  <div
+    slot="header"
+    class="reading-progress absolute inset-x-0 -bottom-px h-0.5 bg-primary"
+    aria-hidden="true"
+  ></div>
+
+  <article>
+    <header class="border-b">
+      <div class="container-page pt-10 pb-14 sm:pt-12 sm:pb-16">
+        <a
+          href="/#projetos"
+          class="inline-flex items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
+        >
+          <Icon name="arrow-left" /> Projetos
+        </a>
+
+        <div class="mt-12 flex flex-wrap items-center gap-3">
+          <StatusBadge status={status} />
+          <span class="meta">{period}</span>
+        </div>
+        <h1
+          class="display mt-5 text-[clamp(2.5rem,6vw,4.25rem)] leading-[1.02] font-semibold tracking-[-0.035em]"
+          style={`view-transition-name: titulo-${project.id}`}
+        >
+          {title}
+        </h1>
+        <p class="mt-6 max-w-[40ch] text-[clamp(1.25rem,2.2vw,1.6rem)] leading-snug font-medium">
+          {tagline}
+        </p>
+        <p class="mt-4 max-w-[62ch] text-lg leading-relaxed text-muted-foreground">{summary}</p>
+
+        <dl class="mt-12 grid gap-6 border-t pt-6 sm:grid-cols-3">
+          <div>
+            <dt class="meta mb-1.5">Papel</dt>
+            <dd>{role}</dd>
+          </div>
+          <div>
+            <dt class="meta mb-1.5">Período</dt>
+            <dd>{period}</dd>
+          </div>
+          <div>
+            <dt class="meta mb-1.5">Código</dt>
+            <dd class="flex flex-wrap gap-2">
+              {links.map((link) => (
+                <a
+                  href={link.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class={cn(buttonVariants({ variant: "outline", size: "sm" }), "rounded-full")}
+                >
+                  {link.kind === "repo" ? <Icon name="github" /> : <Icon name="arrow-up-right" />}
+                  {link.label}
+                </a>
+              ))}
+              {repoStatus === "privado" && (
+                <span class="inline-flex items-center gap-1.5 text-muted-foreground">
+                  <Icon name="lock" class="size-3.5" />
+                  Repositório privado por enquanto
+                </span>
+              )}
+            </dd>
+          </div>
+        </dl>
+      </div>
+    </header>
+
+    {metrics.length > 0 && (
+      <section aria-label="Números do projeto" class="border-b">
+        <dl class="container-page grid grid-cols-2 lg:grid-cols-4">
+          {metrics.map((metric, index) => (
+            <div
+              class:list={[
+                "flex flex-col gap-1.5 py-6 pr-4",
+                index % 2 === 1 && "border-l pl-5 lg:pl-6",
+                index === 2 && "border-t lg:border-t-0 lg:border-l lg:pl-6",
+                index === 3 && "border-t lg:border-t-0",
+              ]}
+            >
+              <dt class="order-2 text-sm text-muted-foreground">{metric.label}</dt>
+              <dd class="display order-1 text-[1.9rem] leading-none font-semibold">
+                {metric.value}
+              </dd>
+            </div>
+          ))}
+        </dl>
+      </section>
+    )}
+
+    <div class="container-page grid gap-14 py-14 sm:py-20 lg:grid-cols-[minmax(0,1fr)_300px]">
+      <div class="prose-case min-w-0 [&>h2:first-child]:mt-0">
+        <Content />
+      </div>
+
+      <aside class="flex flex-col gap-10 lg:sticky lg:top-24 lg:self-start">
+        {flow.length > 0 && (
+          <div>
+            <h2 class="meta mb-3">Fluxo</h2>
+            <FlowDiagram steps={flow} />
+          </div>
+        )}
+        <div>
+          <h2 class="meta mb-3">Stack</h2>
+          <StackList items={stack} />
+        </div>
+      </aside>
+    </div>
+
+    {screens.length > 0 && (
+      <section aria-labelledby="telas-titulo" class="border-t bg-muted py-16 sm:py-20">
+        <div class="container-page">
+          <h2 id="telas-titulo" class="display mb-10 text-[1.9rem] leading-tight font-semibold">
+            Telas
+          </h2>
+          <ul class="grid grid-cols-2 gap-x-5 gap-y-10 sm:grid-cols-3 lg:grid-cols-4">
+            {screens.map((screen) => (
+              <li>
+                <figure class="group flex flex-col gap-3">
+                  <Image
+                    src={screen.src}
+                    alt={screen.alt}
+                    widths={[260, 520]}
+                    sizes="(min-width: 1024px) 260px, (min-width: 640px) 30vw, 45vw"
+                    class="w-full rounded-[1.3rem] border shadow-[0_20px_40px_-24px_rgb(20_10_40/0.35)] transition-transform duration-500 group-hover:-translate-y-1.5"
+                  />
+                  {screen.caption && <figcaption class="meta">{screen.caption}</figcaption>}
+                </figure>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+    )}
+
+    <nav aria-label="Próximo projeto" class="border-t">
+      <a
+        href={projectHref(next)}
+        class="group container-page flex items-end justify-between gap-6 py-14"
+      >
+        <span class="flex flex-col gap-2">
+          <span class="meta">Próximo projeto</span>
+          <span class="display text-[clamp(1.75rem,3.5vw,2.5rem)] leading-tight font-semibold tracking-[-0.03em] transition-colors group-hover:text-primary">
+            {next.data.title}
+          </span>
+          <span class="text-muted-foreground">{next.data.tagline}</span>
+        </span>
+        <Icon
+          name="arrow-right"
+          class="mb-2 size-7 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-1 group-hover:text-primary"
+        />
+      </a>
+    </nav>
+  </article>
+</BaseLayout>

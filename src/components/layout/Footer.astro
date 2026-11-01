@@ -1,0 +1,14 @@
+---
+import { profile } from "@/data/profile";
+
+const year = new Date().getFullYear();
+---
+
+<footer class="bg-foreground text-background">
+  <div class="container-page flex flex-col gap-2 border-t border-background/15 py-8 font-mono text-xs opacity-70 sm:flex-row sm:items-center sm:justify-between">
+    <p>
+      © {year} {profile.fullName}
+    </p>
+    <p>Astro · Tailwind · shadcn/ui · sem cookies</p>
+  </div>
+</footer>

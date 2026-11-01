@@ -1,0 +1,48 @@
+---
+import Section from "@/components/Section.astro";
+
+const facts = [
+  { label: "Na área", value: "Programando desde 2022" },
+  { label: "Hoje", value: "Desenvolvedor júnior na Diletta Solutions" },
+  { label: "Antes", value: "Estagiário na mesma empresa, efetivado após 11 meses" },
+  { label: "Formação", value: "ADS na Fatec Americana, conclusão em dez. 2026" },
+  { label: "Estudando", value: "Pós em Arquitetura de Software com IA" },
+  { label: "Idiomas", value: "Português nativo, inglês intermediário" },
+];
+---
+
+<Section id="sobre" title="Sobre mim" note="Nova Odessa, SP">
+  <div class="grid gap-12 lg:grid-cols-[minmax(0,1.25fr)_minmax(0,1fr)] lg:gap-20">
+    <div class="flex max-w-[62ch] flex-col gap-5 text-lg leading-relaxed">
+      <p>
+        Gosto de tecnologia desde criança e comecei a programar no técnico da ETEC, em 2022. Em 2025
+        entrei na Diletta Solutions como estagiário e, desde maio de 2026, sou desenvolvedor júnior.
+        Lá trabalho com canais digitais de bancos e mexo em várias partes do sistema: APIs,
+        integração com o core bancário, telas e deploy.
+      </p>
+      <p class="text-muted-foreground">
+        Me considero full stack. Tenho mais experiência no back-end, mas vou para o front, o mobile
+        ou o pipeline quando o time precisa. Gosto de entender o sistema inteiro antes de mexer numa
+        parte dele.
+      </p>
+      <p class="text-muted-foreground">
+        Na faculdade, ajudei a levar dois produtos com IA até o deploy, o Fuja e o ClickSeguro. Foi
+        aí que a IA generativa me pegou de vez, principalmente a parte de decidir o que o modelo
+        pode fazer e testar se ele respeita isso.
+      </p>
+      <p class="text-muted-foreground">
+        Agora estou aprendendo Python e machine learning com o Deliverius AI, um projeto pessoal que
+        vou construindo aos poucos.
+      </p>
+    </div>
+
+    <dl class="divide-y border-y self-start">
+      {facts.map((fact) => (
+        <div class="grid grid-cols-[6.5rem_1fr] gap-4 py-3.5">
+          <dt class="meta pt-0.5">{fact.label}</dt>
+          <dd>{fact.value}</dd>
+        </div>
+      ))}
+    </dl>
+  </div>
+</Section>

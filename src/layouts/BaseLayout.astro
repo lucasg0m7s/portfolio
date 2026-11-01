@@ -1,0 +1,57 @@
+---
+import Footer from "@/components/layout/Footer.astro";
+import Header from "@/components/layout/Header.astro";
+import Seo from "@/components/layout/Seo.astro";
+import { site } from "@/data/profile";
+import "@/styles/global.css";
+
+type Props = {
+  title?: string;
+  description?: string;
+  image?: string;
+  type?: "website" | "article";
+  jsonLd?: Record<string, unknown>;
+};
+---
+
+<!doctype html>
+<html lang={site.lang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="theme-color" content="#f8f6fc" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#100c1a" media="(prefers-color-scheme: dark)" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+    <script is:inline>
+      (() => {
+        let theme = null;
+        try {
+          theme = localStorage.getItem("theme");
+        } catch {}
+        const dark = theme ? theme === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
+        document.documentElement.classList.toggle("dark", dark);
+      })();
+    </script>
+    <Seo {...Astro.props} />
+  </head>
+  <body class="flex min-h-dvh flex-col">
+    <a
+      href="#conteudo"
+      class="sr-only z-50 rounded-md bg-primary px-4 py-2 text-primary-foreground focus:not-sr-only focus:fixed focus:top-3 focus:left-3"
+    >
+      Pular para o conteúdo
+    </a>
+    <Header>
+      <slot name="header" />
+    </Header>
+    <main id="conteudo" class="flex-1">
+      <slot />
+    </main>
+    <Footer />
+    <script>
+      import "@/scripts/spotlight";
+    </script>
+  </body>
+</html>

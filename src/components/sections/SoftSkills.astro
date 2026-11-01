@@ -1,0 +1,23 @@
+---
+import Section from "@/components/Section.astro";
+import { softSkills } from "@/data/skills";
+---
+
+<Section
+  id="comportamentais"
+  title="Habilidades comportamentais"
+  note="com um exemplo de onde vieram"
+  description="Como costumo trabalhar com time, com problema e com quem não é da área."
+>
+  <ul class="grid gap-x-12 sm:grid-cols-2">
+    {softSkills.map((skill) => (
+      <li class="border-t py-6">
+        <h3 class="flex items-center gap-2.5 text-lg font-semibold">
+          <span class="h-4 w-0.5 rounded-full bg-primary" aria-hidden="true" />
+          {skill.title}
+        </h3>
+        <p class="mt-2 max-w-[52ch] text-muted-foreground">{skill.text}</p>
+      </li>
+    ))}
+  </ul>
+</Section>

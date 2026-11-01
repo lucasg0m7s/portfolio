@@ -1,0 +1,101 @@
+---
+import { Image } from "astro:assets";
+import { projectHref, type Project } from "@/lib/projects";
+import { cn } from "@/lib/utils";
+import FlowDiagram from "./FlowDiagram.astro";
+import StackList from "./StackList.astro";
+import StatusBadge from "./StatusBadge.astro";
+
+type Props = {
+  project: Project;
+  variant?: "wide" | "tall";
+  class?: string;
+};
+
+const { project, variant = "tall", class: className } = Astro.props;
+const { title, tagline, summary, status, stack, highlights, flow, screens, period } = project.data;
+const href = projectHref(project);
+const headingId = `projeto-${project.id}`;
+const showScreens = screens.length >= 2;
+---
+
+<article
+  aria-labelledby={headingId}
+  data-spotlight
+  class={cn(
+    "spotlight group relative flex flex-col overflow-hidden rounded-lg border bg-card transition-[border-color,transform] duration-300 hover:-translate-y-1 hover:border-primary/35",
+    variant === "wide" && "lg:flex-row",
+    className,
+  )}
+>
+  <div class={cn("flex flex-1 flex-col gap-5 p-6 sm:p-8", variant === "wide" && "lg:max-w-[54%]")}>
+    <div class="flex items-center justify-between gap-3">
+      <StatusBadge status={status} />
+      <span class="meta">{period}</span>
+    </div>
+
+    <div>
+      <h3
+        id={headingId}
+        class="display text-[1.75rem] leading-tight font-semibold"
+        style={`view-transition-name: titulo-${project.id}`}
+      >
+        <a href={href} class="after:absolute after:inset-0 after:z-10 focus-visible:outline-none">
+          {title}
+        </a>
+      </h3>
+      <p class="mt-2 font-medium">{tagline}</p>
+    </div>
+
+    <p class="text-muted-foreground">{summary}</p>
+
+    <ul class="space-y-2 text-[0.95rem]">
+      {highlights.map((item) => (
+        <li class="grid grid-cols-[0.875rem_1fr] gap-2">
+          <span class="mt-[0.7em] h-px w-2.5 bg-primary" aria-hidden="true" />
+          <span>{item}</span>
+        </li>
+      ))}
+    </ul>
+
+    <div class="mt-auto flex flex-wrap items-end justify-between gap-4 pt-3">
+      <StackList items={stack.slice(0, variant === "wide" ? 8 : 6)} />
+      <span
+        class="text-sm font-medium text-primary underline decoration-primary/30 underline-offset-4 transition-colors group-hover:decoration-primary"
+        aria-hidden="true"
+      >
+        Estudo de caso
+      </span>
+    </div>
+  </div>
+
+  {showScreens ? (
+    <div class="relative flex min-h-[300px] items-end justify-center gap-4 overflow-hidden border-t bg-muted px-6 pt-10">
+      {screens.slice(0, 2).map((screen, screenIndex) => (
+        <Image
+          src={screen.src}
+          alt={screen.alt}
+          widths={[220, 440]}
+          sizes="220px"
+          class={cn(
+            "relative w-[44%] max-w-[210px] rounded-t-[1.3rem] border border-b-0 shadow-[0_20px_40px_-20px_rgb(20_10_40/0.35)] transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]",
+            screenIndex === 0
+              ? "translate-y-6 group-hover:translate-y-2"
+              : "translate-y-14 group-hover:translate-y-6",
+          )}
+        />
+      ))}
+    </div>
+  ) : (
+    flow.length > 0 && (
+      <div
+        class={cn(
+          "relative flex items-center border-t bg-muted p-6 sm:p-8",
+          variant === "wide" && "lg:flex-1 lg:border-t-0 lg:border-l",
+        )}
+      >
+        <FlowDiagram steps={flow} class="w-full" />
+      </div>
+    )
+  )}
+</article>

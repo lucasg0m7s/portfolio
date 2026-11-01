@@ -1,0 +1,41 @@
+---
+import StackList from "@/components/project/StackList.astro";
+import Section from "@/components/Section.astro";
+import { experience } from "@/data/experience";
+---
+
+<Section id="experiencia" title="Experiência" note="desde jun. 2025 no setor bancário">
+  <ol class="divide-y border-b">
+    {experience.map((item) => (
+      <li class="grid gap-6 py-10 first:pt-0 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.6fr)] lg:gap-14">
+        <div>
+          <h3 class="display text-[1.4rem] leading-tight font-semibold">{item.company}</h3>
+          <p class="meta mt-1">{item.location}</p>
+          <ul class="mt-4 space-y-2">
+            {item.roles.map((role, index) => (
+              <li>
+                <p class={index === 0 ? "font-medium" : "text-muted-foreground"}>{role.title}</p>
+                <p class="meta">{role.period}</p>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <div>
+          <p class="max-w-[64ch] text-muted-foreground">{item.summary}</p>
+          {item.bullets.length > 0 && (
+            <ul class="mt-5 max-w-[64ch] space-y-3">
+              {item.bullets.map((bullet) => (
+                <li class="grid grid-cols-[0.875rem_1fr] gap-2">
+                  <span class="mt-[0.75em] h-px w-2.5 bg-primary" aria-hidden="true" />
+                  <span>{bullet}</span>
+                </li>
+              ))}
+            </ul>
+          )}
+          {item.stack.length > 0 && <StackList items={item.stack} class="mt-6" />}
+        </div>
+      </li>
+    ))}
+  </ol>
+</Section>

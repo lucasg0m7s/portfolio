@@ -1,0 +1,22 @@
+---
+import { statusLabel, type ProjectStatus } from "@/lib/projects";
+import { cn } from "@/lib/utils";
+
+type Props = { status: ProjectStatus; class?: string };
+
+const { status, class: className } = Astro.props;
+const live = status === "em-desenvolvimento";
+---
+
+<span
+  class={cn(
+    "inline-flex w-fit items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-[0.8rem] text-muted-foreground",
+    className,
+  )}
+>
+  <span
+    class={cn("size-1.5 rounded-full", live ? "bg-primary" : "bg-muted-foreground/50")}
+    aria-hidden="true"
+  ></span>
+  {statusLabel[status]}
+</span>

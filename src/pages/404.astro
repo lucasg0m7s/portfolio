@@ -1,0 +1,22 @@
+---
+import { cn } from "@/lib/utils";
+import { buttonVariants } from "@/components/ui/button";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+---
+
+<BaseLayout title="Página não encontrada">
+  <section class="container-page flex flex-col items-start gap-6 py-28">
+    <p class="meta">Erro 404</p>
+    <h1 class="display text-[clamp(2.5rem,6vw,4.25rem)] leading-[1.02] font-semibold tracking-[-0.035em]">
+      Página não
+      <br />
+      encontrada<span class="text-primary">.</span>
+    </h1>
+    <p class="max-w-[48ch] text-lg text-muted-foreground">
+      O endereço pode ter mudado ou ter sido digitado errado.
+    </p>
+    <a href="/" class={cn(buttonVariants({ size: "lg" }), "rounded-full px-6")}>
+      Voltar ao início
+    </a>
+  </section>
+</BaseLayout>

@@ -1,0 +1,22 @@
+---
+import ProjectCard from "@/components/project/ProjectCard.astro";
+import Section from "@/components/Section.astro";
+import { getProjects } from "@/lib/projects";
+
+const projects = await getProjects();
+const [lead, ...rest] = projects;
+---
+
+<Section
+  id="projetos"
+  title="Projetos"
+  note={`${projects.length} projetos com IA`}
+  description="Nos três, me preocupei com o que o modelo pode ver, com o que ele pode decidir e em conferir a resposta antes de mostrar para o usuário."
+>
+  <div class="grid gap-5 md:grid-cols-2">
+    {lead && <ProjectCard project={lead} variant="wide" class="md:col-span-2" />}
+    {rest.map((project) => (
+      <ProjectCard project={project} />
+    ))}
+  </div>
+</Section>
