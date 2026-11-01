@@ -5,8 +5,8 @@ import sitemap from "@astrojs/sitemap";
 import tailwindcss from "@tailwindcss/vite";
 import { defineConfig } from "astro/config";
 
-const vercelUrl = process.env.VERCEL_PROJECT_PRODUCTION_URL;
-const site = process.env.SITE_URL ?? (vercelUrl ? `https://${vercelUrl}` : "http://localhost:4321");
+// Domínio público fixo: a variável de produção da Vercel aponta para o domínio gerado, não para o apelido.
+const site = process.env.SITE_URL ?? "https://lucasgomes-portfolio.vercel.app";
 
 export default defineConfig({
   site,

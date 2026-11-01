@@ -71,7 +71,7 @@ Cada decisão com contexto, alternativas e consequências. Pesquisa de apoio em 
 ## ADR-008: Vercel sem adaptador, pnpm, Node 22+
 
 - **Decisão:** deploy estático na Vercel (detecção automática do Astro), sem `@astrojs/vercel`. pnpm como
-  gerenciador. `site` vem de `SITE_URL` ou `VERCEL_PROJECT_PRODUCTION_URL`.
+  gerenciador. `site` vem de `SITE_URL` e, sem ela, é `https://lucasgomes-portfolio.vercel.app`.
 - **Alternativas:** adaptador Vercel (só necessário com SSR ou funções); Cloudflare Pages/Netlify (equivalentes).
 - **Consequências:** preview por PR de graça; trocar de host é trivial.
 
