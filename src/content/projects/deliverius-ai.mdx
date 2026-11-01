@@ -1,0 +1,75 @@
+---
+title: Deliverius AI
+tagline: Agente de atendimento para um app de delivery
+summary: "Um agente de IA para um app de delivery fictício. Entende o problema do cliente, consulta o pedido, aplica a política da empresa e age: reembolsa, emite cupom ou chama um humano para aprovar. Com custo, latência e qualidade medidos."
+role: Projeto pessoal · do desenho ao deploy
+period: 2026 — em andamento
+status: em-desenvolvimento
+order: 1
+featured: true
+stack:
+  - Python 3.13
+  - FastAPI
+  - LangGraph
+  - PostgreSQL + pgvector
+  - BERTimbau
+  - LightGBM
+  - MLflow
+  - Langfuse
+highlights:
+  - Dados pessoais mascarados antes de qualquer LLM ou log
+  - Intenção classificada por um modelo próprio, sem chamar LLM
+  - O LLM propõe a ação; um motor de política em código decide
+  - Antifraude calibrado pausa reembolsos arriscados para aprovação humana
+flow:
+  - Mascarar dados pessoais
+  - Classificar intenção
+  - Agente consulta pedido e política
+  - Política em código valida
+  - Antifraude decide
+  - Executar ou pedir aprovação
+repoStatus: privado
+---
+
+## O problema
+
+Atendimento de delivery tem muito caso repetitivo ("veio faltando item", "chegou frio", "quero cancelar") e
+alguns casos caros, como reembolso alto e suspeita de fraude. Um chatbot que só conversa não ajuda: o cliente
+quer o problema resolvido. Um agente que age sozinho, por outro lado, é um risco. O desafio é deixar a IA
+resolver o que é seguro e chamar uma pessoa quando não é.
+
+## O desenho
+
+O fluxo é fixo e cada etapa tem um dono claro:
+
+1. **Privacidade primeiro.** CPF, cartão, telefone e e-mail são mascarados antes de qualquer chamada a LLM ou
+   linha de log. Alergia é tratada como dado sensível e nunca vai para um provedor externo.
+2. **Intenção com modelo próprio.** Um BERTimbau ajustado classifica a mensagem em milissegundos, sem custo de LLM.
+3. **Agente com ferramentas (LangGraph).** Consulta pedido, entrega, histórico e política. A política vem de um
+   RAG híbrido (pgvector + busca textual em português, com citação do trecho).
+4. **Política em código.** O LLM só **propõe** a ação. Um motor determinístico valida elegibilidade, limites e
+   valores. O modelo não tem como "se convencer" a dar um reembolso fora da regra.
+5. **Antifraude.** Um LightGBM calibrado dá uma nota ao reembolso. Risco alto ou valor alto pausam o grafo
+   (`interrupt`) até um atendente aprovar.
+6. **Execução idempotente**, resposta validada, custo e latência registrados por turno.
+
+## Por que assim
+
+- **Fluxo fixo + agente que só propõe**, em vez de um agente livre: previsível, testável e auditável.
+- **Modelo pequeno para intenção**, em vez de LLM para tudo: mais barato, mais rápido, e é uma comparação que
+  vale como pesquisa (cinco abordagens comparadas em qualidade, latência e custo).
+- **Custo zero** como restrição: Gemini na cota gratuita, modelos locais e uma camada de LLM que troca de
+  provedor sem mudar o agente.
+
+## Como vai ser medido
+
+- Clientes simulados percorrendo cenários reais, com conformidade à política.
+- Testes de segurança com prompt injection direto e indireto.
+- Juiz LLM só se a concordância com rótulos humanos for boa (kappa ≥ 0,6).
+- Painel com taxa de automação, custo por conversa e latência p50/p95.
+
+## Status
+
+A fundação está pronta (Python 3.13, FastAPI, Postgres com pgvector, CI). O núcleo de domínio, os modelos e o
+agente estão em construção, uma especificação por vez. **Os números entram nesta página quando os testes de
+avaliação rodarem**, não antes.

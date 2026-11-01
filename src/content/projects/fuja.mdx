@@ -1,0 +1,105 @@
+---
+title: Fuja
+tagline: Plataforma acadêmica com API, app e assistente com IA
+summary: "Plataforma acadêmica da Fatec Americana para alunos e professores: atividades, notas, frequência, horário e materiais. Desenhei a API, construí sozinho o app mobile e criei um assistente com IA que só enxerga os dados de quem pergunta."
+role: Arquiteto e desenvolvedor full stack
+period: 2025 — 2026
+status: academico
+order: 2
+featured: true
+stack:
+  - C# · .NET 10
+  - EF Core
+  - PostgreSQL
+  - Flutter
+  - Riverpod 3
+  - Google Gemini
+  - Docker
+  - GitHub Actions
+highlights:
+  - API em Clean Architecture com testes de integração em todas as camadas
+  - App Flutter construído por mim do zero, do design system ao deploy
+  - Assistente com Gemini que nunca acessa dados de outra pessoa
+  - Pipeline DevSecOps com cinco ferramentas de segurança
+repoStatus: privado
+screens:
+  - src: ../../assets/projects/fuja/aluno-inicio.webp
+    alt: Tela inicial do aluno com a próxima aula, resumo do dia e alerta de frequência
+    caption: Início do aluno
+  - src: ../../assets/projects/fuja/assistente.webp
+    alt: Assistente virtual respondendo sobre o prazo de uma atividade, com atalho para abrir a entrega
+    caption: Assistente com IA
+  - src: ../../assets/projects/fuja/desempenho.webp
+    alt: Desempenho com médias por disciplina e notas de cada avaliação
+    caption: Desempenho
+  - src: ../../assets/projects/fuja/chamada.webp
+    alt: Chamada com lista de alunos e botões de presença e falta
+    caption: Chamada do professor
+  - src: ../../assets/projects/fuja/atividades.webp
+    alt: Lista de atividades separadas em a fazer, atrasadas e feitas
+    caption: Atividades
+  - src: ../../assets/projects/fuja/correcao.webp
+    alt: Correção de entrega com arquivo do aluno e seletor de nota
+    caption: Correção
+  - src: ../../assets/projects/fuja/modo-escuro.webp
+    alt: Tela inicial do aluno no modo escuro
+    caption: Modo escuro
+  - src: ../../assets/projects/fuja/acessibilidade.webp
+    alt: Ajustes de acessibilidade com tamanho do texto, fonte legível e alto contraste
+    caption: Acessibilidade
+---
+
+## O problema
+
+O sistema acadêmico oficial resolve a secretaria, mas não o dia a dia: o aluno não sabe com rapidez o que precisa
+entregar, quando tem aula e se a frequência está em risco; o professor faz chamada e correção no computador.
+O Fuja junta tudo num lugar só, com app e web usando a mesma API.
+
+## Meu papel
+
+Arquiteto e desenvolvedor full stack num time da faculdade. Desenhei e escrevi a maior parte da API, construí
+sozinho o app mobile e montei o pipeline de segurança, a infraestrutura e a documentação de decisões.
+
+## A API
+
+- **Clean Architecture em quatro camadas** (Domain, Application, Infrastructure, Api), com um projeto de teste
+  para cada camada.
+- Contrato OpenAPI versionado no repositório e regravado a cada execução em desenvolvimento; o app usa um
+  cliente gerado a partir dele.
+- Testes com xUnit e Testcontainers contra um PostgreSQL de verdade, cobrindo regras de negócio, autorização e
+  integração.
+- ASP.NET Core Identity com cookie `httpOnly`, validação, rate limiting, idempotência e outbox para push.
+
+## O assistente com IA
+
+A decisão central foi **não dar ferramentas ao modelo**. Em vez de deixar o LLM consultar o banco (tool
+calling), o servidor monta o contexto a cada pergunta, só com os dados do próprio usuário. Assim, mesmo um prompt
+injection bem-sucedido não tem como chegar ao dado de outra pessoa.
+
+- Resposta em JSON com schema e o índice do item citado, para o app mostrar o atalho para a tela de origem.
+- Modelo de fallback e orçamento diário de chamadas.
+- Filtro que remove links, e-mails e telefones não institucionais da resposta.
+- Bateria de testes de red team contra prompt injection e vazamento de dados.
+
+## O app
+
+Flutter com Material 3 e MVVM (guia oficial), Riverpod 3 e go_router. Cliente HTTP gerado a partir do contrato
+OpenAPI, biometria, armazenamento seguro, notificações push, português e inglês, e distribuição automática para
+testadores via Firebase App Distribution. Acessibilidade levada a sério: texto até 150%, alto contraste, fonte
+de alta legibilidade e leitor de tela.
+
+## Segurança
+
+Pipeline no GitHub Actions com **Gitleaks** (segredos), **Semgrep** com regras próprias testadas (SAST),
+**Trivy** (configuração e containers), **Schemathesis** (fuzzing guiado pelo contrato) e **OWASP ZAP** (DAST).
+Actions fixadas por hash de commit.
+
+## O que eu levo
+
+Aprendi que decidir logo no começo o que o modelo pode acessar resolve boa parte dos problemas de segurança com
+LLM. E anotar cada decisão com as alternativas fez o time discutir prós e contras, e não gosto pessoal.
+
+<small>
+  Projeto acadêmico, ainda sem usuários em produção. Telas do protótipo navegável; nomes e dados são
+  exemplos.
+</small>

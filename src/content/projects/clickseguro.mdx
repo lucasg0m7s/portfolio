@@ -1,0 +1,85 @@
+---
+title: ClickSeguro
+tagline: Educação digital para idosos, com um assistente de IA
+summary: "App que ensina idosos a usar a internet com segurança, com trilhas de aulas, quizzes e notícias sobre golpes. Tem um assistente de IA integrado: a pessoa tira dúvidas na conversa ou envia uma mensagem ou print, e recebe uma nota de risco e dicas em linguagem simples. Fui o principal desenvolvedor do back-end."
+role: Desenvolvedor back-end principal
+period: 2025 — 2026
+status: academico
+order: 3
+featured: true
+stack:
+  - NestJS 11
+  - TypeScript
+  - Prisma
+  - PostgreSQL
+  - Zod
+  - Google Gemini
+  - Jest
+highlights:
+  - Trilhas educativas com aulas, quizzes e progresso, geridas por um CMS
+  - Assistente de IA restrito a segurança digital, que também analisa mensagens e prints
+  - 'Saída JSON validada e regra conservadora: abaixo de 75% de confiança, a resposta é "incerto"'
+  - Cache por hash do conteúdo evita pagar duas vezes pela mesma análise
+flow:
+  - Mensagem ou print
+  - Normalizar e gerar hash
+  - Cache?
+  - Gemini com regras conservadoras
+  - Validar JSON
+  - Risco, confiança e dicas
+repoStatus: privado
+---
+
+## O problema
+
+Muitos idosos chegaram à internet pelo celular e sem ninguém para ensinar o básico. Por isso são o alvo preferido
+de golpes por WhatsApp e SMS. O ClickSeguro é um app Flutter que faz essa alfabetização digital aos poucos e
+deixa uma IA à mão para as dúvidas do dia a dia. Nesse público, um "parece seguro" errado custa caro, então a IA
+precisava ajudar **sem dar falsa segurança**.
+
+## O app
+
+- **Trilhas educativas:** módulos com aulas curtas e quizzes, com progresso salvo por usuário.
+- **Notícias** sobre golpes recentes, separadas por categoria.
+- **Contatos oficiais** (banco, Procon, polícia, CERT.br) e uma lista de contatos de confiança da própria pessoa.
+- **Assistente de IA** para conversar e para analisar mensagens e prints suspeitos.
+- **CMS** para a equipe publicar aulas, notícias e contatos sem mexer no código.
+
+## Meu papel
+
+Principal desenvolvedor do back-end e responsável pelo deploy. Também apoiei outras frentes do time quando foi
+preciso.
+
+## O assistente de IA
+
+- **Escopo fechado:** só fala de golpes, fraudes, phishing, fake news e proteção de dados. Fora disso, recusa com
+  educação e não dá conselho financeiro, médico ou jurídico.
+- **Nunca confirma notícia:** quando perguntam se algo é verdade, explica que não consegue checar e indica ao menos
+  duas fontes, como agências de checagem ou o órgão oficial.
+- **Risco real vem primeiro:** se a pessoa parece estar caindo num golpe agora, a orientação é agir (bloquear o
+  cartão, ligar para o banco) antes de qualquer análise.
+- **Histórico de conversa** para manter a coerência e não repetir orientações, com limite de requisições por minuto.
+
+## A análise de mensagens e prints
+
+- **Categorias claras:** phishing, golpe financeiro, engenharia social, fake news, spam, seguro e incerto.
+- **Regras conservadoras no prompt:** abaixo de 75% de confiança a resposta é obrigatoriamente "incerto"; "seguro"
+  só com confiança de pelo menos 85% e risco zero. A ausência de sinal malicioso não é tratada como prova de
+  segurança.
+- **Saída validada:** o modelo devolve JSON, e um parser valida tipo, faixas de nota e quantidade de dicas antes
+  de qualquer coisa chegar ao usuário.
+- **Sempre honesto sobre o limite:** toda explicação deixa claro que é uma análise de IA e, nos casos incertos,
+  orienta a procurar uma fonte oficial.
+- **Cache por hash** do texto normalizado ou da imagem: a mesma mensagem viral não gera duas chamadas pagas.
+
+## O resto da API
+
+- Autenticação JWT com duas audiências (app e CMS) e três papéis, senhas com argon2, Helmet e rate limiting.
+- Job diário que anonimiza análises com mais de 30 dias, em linha com a LGPD.
+- Upload de imagens validado pelo tipo real do arquivo, e-mails transacionais e documentação protegida.
+- CI com validação de schema, lint, checagem de tipos, build e testes com Jest.
+
+## O que eu levo
+
+Com um público tão vulnerável, aprendi que a IA precisa saber dizer "não sei". É melhor admitir a dúvida do que
+passar uma certeza errada. E ela funciona melhor ajudando a pessoa a aprender do que tentando pensar por ela.
